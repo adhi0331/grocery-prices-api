@@ -56,4 +56,3 @@ jobs:
           --function-name grocery-prices-api \
           --handler app.lambda_handler \
           --runtime python3.9 \
-          --architectures arm64
