@@ -48,11 +48,22 @@ jobs:
         aws lambda update-function-code \
           --function-name grocery-prices-api \
           --zip-file fileb://deployment-package.zip
-        
-    # Step 7: Update function configuration if needed
+    
+    # Step 7: Wait for the previous update to complete
+    - name: Wait for update to complete
+      run: |
+        while true; do
+          STATUS=$(aws lambda get-function-configuration --function-name grocery-prices-api --query 'State' --output text)
+          if [ "$STATUS" = "Active" ]; then
+            break
+          fi
+          echo "Waiting for Lambda function to become active..."
+          sleep 10
+        done
+    # Step 8: Update function configuration if needed
     - name: Update function configuration
       run: |
         aws lambda update-function-configuration \
           --function-name grocery-prices-api \
           --handler app.lambda_handler \
-          --runtime python3.9 \
+          --runtime python3.9
